@@ -12,7 +12,7 @@ fi
 
 # support cross-compilation for 32-bit ISAs
 case "$ARCH" in
-    "x86_64"|"amd64")
+    "x86_64"|"amd64"|"armhf"|"aarch64")
         ;;
     "i386"|"i586"|"i686")
         export CFLAGS="-m32"
