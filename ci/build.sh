@@ -73,7 +73,7 @@ bin/linuxdeploy "${LINUXDEPLOY_ARGS[@]}"
 # bundle AppImage plugin
 mkdir -p AppDir/plugins
 
-wget https://github.com/TheAssassin/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-"$ARCH".AppImage
+wget https://github.com/encounter/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-"$ARCH".AppImage
 chmod +x linuxdeploy-plugin-appimage-"$ARCH".AppImage
 ./linuxdeploy-plugin-appimage-"$ARCH".AppImage --appimage-extract
 mv squashfs-root/ AppDir/plugins/linuxdeploy-plugin-appimage

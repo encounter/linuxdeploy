@@ -6,12 +6,12 @@ jobs:
   build-and-test:
     strategy:
       matrix:
-        ARCH: [x86_64, i386]
+        ARCH: [x86_64, i386, aarch64]
         BUILD_TYPE: [appimage, coverage]
       fail-fast: false
 
     name: ${{ matrix.BUILD_TYPE }} ${{ matrix.ARCH }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-16.04
 
     env:
       ARCH: ${{ matrix.ARCH }}
@@ -35,8 +35,30 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libmagic-dev:i386 libjpeg-dev:i386 libpng-dev:i386 cimg-dev gcc-multilib g++-multilib libfuse2:i386
 
-      - name: Build and test
+      - name: Build and test (native)
+        if: matrix.ARCH != 'aarch64'
         run: bash -ex ci/build.sh
+
+      - name: Build and test (VM)
+        if: matrix.ARCH != 'x86_64' && matrix.ARCH != 'i386'
+        uses: uraimo/run-on-arch-action@v2.0.5
+        with:
+          arch: ${{ matrix.ARCH }}
+          distro: ubuntu16.04
+          githubToken: ${{ github.token }}
+          dockerRunArgs: |
+            --volume "${PWD}:/build"
+          install: |
+            apt update
+            apt install -y build-essential wget git pkg-config autoconf libmagic-dev libjpeg-dev libpng-dev cimg-dev
+          run: |
+            cd /build
+            ARCH=$(uname -m) ci/build.sh
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: AppImage aarch64
+          path: linuxdeploy-plugin-appimage*.AppImage*
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v2
